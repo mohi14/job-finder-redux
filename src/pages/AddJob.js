@@ -1,6 +1,33 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { createJobs } from '../features/jobs/JobsSlice';
 
 const AddJob = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const form = event.target;
+
+        const title = form.lwsJobTitle.value;
+        const type = form.lwsJobType.value;
+        const salary = form.lwsJobSalary.value;
+        const deadline = form.lwsJobDeadline.value;
+
+        const data = {
+            title,
+            type,
+            salary,
+            deadline
+        }
+
+        dispatch(createJobs(data))
+
+
+        navigate("/")
+    }
     return (
 
 
@@ -9,7 +36,7 @@ const AddJob = () => {
                 <h1 class="mb-10 text-center lws-section-title">Add New Job</h1>
 
                 <div class="max-w-3xl mx-auto">
-                    <form class="space-y-6">
+                    <form class="space-y-6" onSubmit={handleSubmit}>
                         <div class="fieldContainer">
                             <label for="lws-JobTitle" class="text-sm font-medium text-slate-300">Job Title</label>
                             <select id="lws-JobTitle" name="lwsJobTitle" required>

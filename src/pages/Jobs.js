@@ -1,17 +1,33 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import JobCard from '../components/JobCard';
 import JobHeader from '../components/JobHeader';
-import { fetchJobs } from '../features/jobs/JobsSlice';
+
 
 const Jobs = () => {
-    const { jobs, isLoading, isError, error } = useSelector(state => state.jobs)
-    const dispatch = useDispatch()
+    const { jobs, isLoading, isError, error, searchText, salarySort } = useSelector(state => state.jobs)
 
+    const handleSearch = (job) => {
+        if (searchText) {
+            return job.title.toLowerCase().includes(searchText.toLowerCase())
+        }
+        else {
+            return true
+        }
+    }
 
-    useEffect(() => {
-        dispatch(fetchJobs())
-    }, [dispatch])
+    const handleSalary = (a, b) => {
+        if (salarySort === "low") {
+            return a.salary - b.salary
+        }
+        if (salarySort === "high") {
+            return b.salary - a.salary
+        }
+        else {
+            return true
+        }
+    }
+
 
     let content = null;
 
@@ -27,7 +43,7 @@ const Jobs = () => {
     }
 
     if (!isError && !isLoading && jobs?.length > 0) {
-        content = jobs.map(job => <JobCard key={job.id} job={job}></JobCard>)
+        content = jobs.filter(handleSearch).sort(handleSalary).map(job => <JobCard key={job.id} job={job}></JobCard>)
     }
     return (
         <div className="lg:pl-[14rem]  mt-[5.8125rem]">
